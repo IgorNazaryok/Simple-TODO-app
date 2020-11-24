@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {Todo} from './interface'
-
+import {TodoService} from './todo.service'
 
 @Component({
   selector: 'app-root',
@@ -12,10 +12,9 @@ export class AppComponent implements OnInit{
   form: FormGroup
   titleIsInvalid=false
   textIsInvalid=false
-  todos =[]
-  id=1;
 
-
+  constructor(public todoService:TodoService){    
+   }
 
   ngOnInit()
   {
@@ -24,14 +23,14 @@ export class AppComponent implements OnInit{
       text: new FormControl('', Validators.required)
     })
 
-    this.GetTodos();
+    this.todoService.getTodos();
 
   }
 
   submit()
   {    
     this.form.controls.title.status == 'INVALID' || !this.form.value.title.trim() ? this.titleIsInvalid=true : this.titleIsInvalid=false;
-    this.form.controls.text.status == 'INVALID' || !this.form.value.title.trim() ? this.textIsInvalid=true : this.textIsInvalid=false;
+    this.form.controls.text.status == 'INVALID' || !this.form.value.text.trim() ? this.textIsInvalid=true : this.textIsInvalid=false;
    
     if (this.form.valid && !!this.form.value.title.trim() && !!this.form.value.title.trim())
     {
@@ -39,22 +38,15 @@ export class AppComponent implements OnInit{
       const todo:Todo={
         title: this.form.value.title,
         text: this.form.value.text,
-        id: this.id++
+        id: ++this.todoService.id
       }
       this.form.reset();
-      this.todos.unshift(todo);
-      localStorage.listTodos = JSON.stringify(this.todos);
+      this.todoService.addTodo(todo);
     }      
-  }
-
-  GetTodos ()
-  {
-    this.todos = localStorage.listTodos ? JSON.parse(localStorage.listTodos) : [];
   }
 
   removeTodo(id:number)
   {     
-    this.todos=this.todos.filter(todo=>todo.id!==id)
-    localStorage.listTodos = JSON.stringify(this.todos);
+    this.todoService.deleteTodo(id);    
   }
 }

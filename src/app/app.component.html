@@ -27,8 +27,8 @@
     </div>
   </form>
 
-  <div *ngIf='todos'>
-    <app-todo *ngFor="let todo of todos" [todo]="todo" (onRemove)="removeTodo($event)"></app-todo>
+  <div *ngIf='this.todoService.todos'>
+    <app-todo *ngFor="let todo of this.todoService.todos" [todo]="todo" (onRemove)="removeTodo($event)"></app-todo>
   </div>
 </div>
 
